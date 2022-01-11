@@ -144,6 +144,12 @@ def test_axi():
         K = a.assemble(parallel=parallel).toarray()
         assert K.shape == (r.mesh.ndof, r.mesh.ndof)
 
+        Ku = a.assemble(parallel=parallel, triu=True).toarray()
+        Kl = a.assemble(parallel=parallel, tril=True).toarray()
+
+        assert np.allclose(np.triu(Kl) - np.diag(np.diag(Kl)), 0)
+        assert np.allclose(np.tril(Ku) - np.diag(np.diag(Ku)), 0)
+
 
 def test_linearform():
 
@@ -200,11 +206,16 @@ def test_bilinearform():
         K = a.assemble(parallel=parallel).toarray()
         assert K.shape == (r.mesh.ndof, r.mesh.ndof)
 
+        Ku = a.assemble(parallel=parallel, triu=True).toarray()
+        Kl = a.assemble(parallel=parallel, tril=True).toarray()
+        assert np.allclose(np.triu(Kl) - np.diag(np.diag(Kl)), 0)
+        assert np.allclose(np.tril(Ku) - np.diag(np.diag(Ku)), 0)
+
         a = fe.IntegralForm(P, u, r.dV, p, True, False)
         y = a.integrate(parallel=parallel)
         K = a.assemble(y, parallel=parallel).toarray()
         assert K.shape == (r.mesh.ndof, r.mesh.npoints)
-        K = a.assemble(parallel=parallel).toarray()
+        K = a.assemble(parallel=parallel)
         assert K.shape == (r.mesh.ndof, r.mesh.npoints)
 
 
@@ -220,6 +231,11 @@ def test_bilinearform_broadcast():
         assert K.shape == (r.mesh.ndof, r.mesh.ndof)
         K = a.assemble(parallel=parallel).toarray()
         assert K.shape == (r.mesh.ndof, r.mesh.ndof)
+
+        Ku = a.assemble(parallel=parallel, triu=True).toarray()
+        Kl = a.assemble(parallel=parallel, tril=True).toarray()
+        assert np.allclose(np.triu(Kl) - np.diag(np.diag(Kl)), 0)
+        assert np.allclose(np.tril(Ku) - np.diag(np.diag(Ku)), 0)
 
         a = fe.IntegralForm(P, u, r.dV, p, True, False)
         y = a.integrate(parallel=parallel)
@@ -249,6 +265,11 @@ def test_mixed():
         K = a.assemble(y, parallel=parallel).toarray()
         K = a.assemble(parallel=parallel).toarray()
 
+        Ku = a.assemble(parallel=parallel, triu=True).toarray()
+        Kl = a.assemble(parallel=parallel, tril=True).toarray()
+        assert np.allclose(np.triu(Kl) - np.diag(np.diag(Kl)), 0)
+        assert np.allclose(np.tril(Ku) - np.diag(np.diag(Ku)), 0)
+
         z = r.mesh.ndof + 2 * r.mesh.npoints
         assert K.shape == (z, z)
 
@@ -267,6 +288,11 @@ def test_mixed():
         y = a.integrate(parallel=parallel)
         K = a.assemble(y, parallel=parallel).toarray()
         K = a.assemble(parallel=parallel).toarray()
+
+        Ku = a.assemble(parallel=parallel, triu=True).toarray()
+        Kl = a.assemble(parallel=parallel, tril=True).toarray()
+        assert np.allclose(np.triu(Kl) - np.diag(np.diag(Kl)), 0)
+        assert np.allclose(np.tril(Ku) - np.diag(np.diag(Ku)), 0)
 
         z = r.mesh.ndof + 2 * r.mesh.npoints
         assert K.shape == (z, z)
