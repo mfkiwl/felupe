@@ -244,7 +244,9 @@ class BilinearForm:
 
         return values.sum(-2)
 
-    def assemble(self, weakform, args=(), kwargs={}, parallel=False):
+    def assemble(
+        self, weakform, args=(), kwargs={}, parallel=False, triu=False, tril=False
+    ):
         r"""Return the assembled integral as sparse matrix.
 
         Parameters
@@ -257,6 +259,10 @@ class BilinearForm:
             Optional named arguments for callable weakform
         parallel : bool, optional (default is False)
             Flag to activate parallel threading.
+        triu : bool, optional (default is False)
+            Flag to assemble only upper triangle.
+        tril : bool, optional (default is False)
+            Flag to assemble only lower triangle.
 
         Returns
         -------
@@ -266,7 +272,7 @@ class BilinearForm:
 
         values = self.integrate(weakform, args, kwargs, parallel=parallel)
 
-        return self._form.assemble(values)
+        return self._form.assemble(values, triu=triu, tril=tril)
 
 
 class LinearFormMixed:
@@ -441,7 +447,9 @@ class BilinearFormMixed:
             for form, fun in zip(self._bilinearform, weakform)
         ]
 
-    def assemble(self, weakform, args=(), kwargs={}, parallel=False):
+    def assemble(
+        self, weakform, args=(), kwargs={}, parallel=False, triu=False, tril=False
+    ):
         r"""Return the assembled integral as matrix.
 
         Parameters
@@ -454,6 +462,10 @@ class BilinearFormMixed:
             Optional named arguments for callable weakform
         parallel : bool, optional (default is False)
             Flag to activate parallel threading.
+        triu : bool, optional (default is False)
+            Flag to assemble only upper triangle.
+        tril : bool, optional (default is False)
+            Flag to assemble only lower triangle.
 
         Returns
         -------
@@ -463,4 +475,4 @@ class BilinearFormMixed:
 
         values = self.integrate(weakform, args, kwargs, parallel=parallel)
 
-        return self._form.assemble(values)
+        return self._form.assemble(values, triu=triu, tril=tril)

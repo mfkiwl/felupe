@@ -102,7 +102,7 @@ class IntegralFormMixed:
         else:
             raise ValueError("Unknown input format.")
 
-    def assemble(self, values=None, parallel=False, block=True):
+    def assemble(self, values=None, parallel=False, block=True, triu=False, tril=False):
 
         out = []
 
@@ -110,7 +110,7 @@ class IntegralFormMixed:
             values = [None] * len(self.forms)
 
         for val, form in zip(values, self.forms):
-            out.append(form.assemble(val, parallel))
+            out.append(form.assemble(val, parallel=parallel, triu=triu, tril=tril))
 
         if block and self.mode == 2:
             K = np.zeros((self.nv, self.nv), dtype=object)

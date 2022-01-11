@@ -133,8 +133,19 @@ class IntegralForm:
             self.indices = (eaibk0, eaibk1)
             self.shape = (self.v.indices.shape[0], self.u.indices.shape[0])
 
-    def assemble(self, values=None, parallel=False):
+    def assemble(self, values=None, parallel=False, triu=False, tril=False):
         "Assembly of sparse region vectors or matrices."
+
+        i, j = self.indices
+
+        if triu and not tril:
+            mask = i <= j
+
+        elif tril and not triu:
+            mask = i >= j
+
+        elif not tril and not triu:
+            mask = slice(None)
 
         if values is None:
             values = self.integrate(parallel=parallel)
@@ -144,7 +155,8 @@ class IntegralForm:
         )
 
         out = sparsematrix(
-            (values.transpose(permute).ravel(), self.indices), shape=self.shape
+            (values.transpose(permute).ravel()[mask], (i[mask], j[mask])),
+            shape=self.shape,
         )
 
         return out
